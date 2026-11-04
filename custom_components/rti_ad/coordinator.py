@@ -89,6 +89,10 @@ class RtiAdCoordinator(DataUpdateCoordinator[dict[int, ZoneData]]):
     control port is released as soon as the work is done.
     """
 
+    # Registry id of the amp hub device, assigned in async_setup_entry before the
+    # platforms load; zone devices name it as their via_device_id.
+    hub_device_id: str
+
     def __init__(
         self,
         hass: HomeAssistant,

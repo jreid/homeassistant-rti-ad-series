@@ -1,11 +1,10 @@
-# Pins the closest release to homeassistant==2026.3.0, the latest GA release
-# at the time this was last bumped (pytest-homeassistant-custom-component
-# didn't cut a build for that exact patch, so this is the nearest one,
-# 2026.3.1). Bump this as new GA releases ship to keep tests running against
+# Pins homeassistant==2026.8.0, the minimum version in hacs.json. 2026.8 is
+# the first release whose DeviceInfo accepts via_device_id, which the zone
+# devices use to link to the amp hub device. Bump this as new GA releases ship to keep tests running against
 # a current Home Assistant, and raise manifest.json's min_ha_version to match
 # whenever that upgrade requires it. This also pulls in the matching
 # homeassistant core and pytest-asyncio.
-pytest-homeassistant-custom-component==0.13.317
+pytest-homeassistant-custom-component==0.13.354
 
 # Static analysis, run both locally via .pre-commit-config.yaml and in CI
 # (.github/workflows/lint.yml). Pinned so local runs, pre-commit, and CI all

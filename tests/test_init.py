@@ -59,7 +59,10 @@ async def test_setup_entry_creates_coordinator_and_forwards_platforms(hass):
     assert hub.manufacturer == "RTI"
     # Not derived from zone count -- there's no such SKU as "AD-2x".
     assert hub.model == "AD Series"
-    assert len(_zone_devices(device_registry, entry.entry_id)) == 2
+    zones = _zone_devices(device_registry, entry.entry_id)
+    assert len(zones) == 2
+    assert entry.runtime_data.hub_device_id == hub.id
+    assert all(zone.via_device_id == hub.id for zone in zones)
 
     assert len(hass.states.async_all("media_player")) == 2
     assert len(hass.states.async_all("number")) == 4  # treble + bass per zone

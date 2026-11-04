@@ -16,6 +16,7 @@ from __future__ import annotations
 import asyncio
 import time
 
+from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.update_coordinator import UpdateFailed
 from pytest_homeassistant_custom_component.common import MockEntityPlatform
 
@@ -250,6 +251,8 @@ async def settle():
 def make_coordinator(hass, zones=(1, 2), powered=True):
     amp = FakeAmp(zones, powered)
     coord = coordinator.RtiAdCoordinator(hass, amp, list(zones))
+    # Normally set by async_setup_entry once the amp hub device is registered.
+    coord.hub_device_id = "hub-device-id"
     return coord, amp
 
 
@@ -270,6 +273,13 @@ async def setup_platform_entry(hass, platform_module, domain, entry):
     async_register_entity_service(), both of which require an EntityPlatform
     context that a bare call to async_setup_entry doesn't provide.
     """
+    # Zone devices link to the amp hub device by registry id, and HA rejects a
+    # via_device_id that isn't registered, so register the hub the way the
+    # integration's own async_setup_entry does before the platform loads.
+    hub = dr.async_get(hass).async_get_or_create(
+        config_entry_id=entry.entry_id, identifiers={(const.DOMAIN, entry.entry_id)}
+    )
+    entry.runtime_data.hub_device_id = hub.id
     platform = MockEntityPlatform(
         hass, platform_name=const.DOMAIN, domain=domain, platform=platform_module
     )

@@ -27,6 +27,7 @@ from harness import FakeServer, const
 from harness import protocol as p
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
+from custom_components import rti_ad
 from custom_components.rti_ad import config_flow as cf
 
 
@@ -42,6 +43,10 @@ def _schema_default(schema, field_name):
 
 async def _ok_validate(host, port):
     return None
+
+
+async def _ok_setup_entry(hass, entry):
+    return True
 
 
 async def _fail_validate(host, port):
@@ -173,6 +178,9 @@ async def test_user_step_advances_to_the_sources_step_on_success(hass, monkeypat
 
 async def test_sources_step_creates_an_entry_on_success(hass, monkeypatch):
     monkeypatch.setattr(cf, "_validate_connection", _ok_validate)
+    # Creating the entry sets it up, which would connect to the (fake) amp;
+    # this test is only about the flow's result.
+    monkeypatch.setattr(rti_ad, "async_setup_entry", _ok_setup_entry)
     result = await hass.config_entries.flow.async_init(
         const.DOMAIN, context={"source": "user"}, data=_user_input()
     )
