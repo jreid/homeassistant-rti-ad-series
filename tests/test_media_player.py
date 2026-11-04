@@ -34,7 +34,7 @@ def _player(hass, zone=1, zones=(1, 2), powered=True):
 
 
 # --------------------------------------------------------------------------
-# Device/entity wiring (#6: one device per zone, via_device to the amp)
+# Device/entity wiring (#6: one device per zone, via_device_id to the amp)
 # --------------------------------------------------------------------------
 
 
@@ -42,7 +42,7 @@ async def test_device_info_is_a_zone_device_linked_to_the_amp(hass):
     player, _, _ = _player(hass, zone=2)
     info = player._attr_device_info
     assert info["identifiers"] == {(const.DOMAIN, "entry1_zone_2")}
-    assert info["via_device"] == (const.DOMAIN, "entry1")
+    assert info["via_device_id"] == "hub-device-id"
     assert info["name"] == "Zone 2"
 
 

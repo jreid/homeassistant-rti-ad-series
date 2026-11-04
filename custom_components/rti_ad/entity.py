@@ -28,6 +28,6 @@ class RtiAdZoneEntity(CoordinatorEntity[RtiAdCoordinator]):
         self._attr_unique_id = f"{entry.entry_id}_zone_{zone}{unique_id_suffix}"
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, f"{entry.entry_id}_zone_{zone}")},
-            via_device=(DOMAIN, entry.entry_id),
+            via_device_id=coordinator.hub_device_id,
             name=f"Zone {zone}",
         )

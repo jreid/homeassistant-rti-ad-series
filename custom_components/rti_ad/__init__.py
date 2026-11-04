@@ -28,10 +28,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: RtiAdConfigEntry) -> boo
     entry.async_on_unload(entry.add_update_listener(_async_update_listener))
 
     device_registry = dr.async_get(hass)
-    # The amp device is also the via_device parent for each zone device, so it
-    # must be created explicitly rather than left to the entity that lives on
-    # it (the all-zones-off button) to bring into existence.
-    device_registry.async_get_or_create(
+    # The amp device is also the via_device_id parent for each zone device, so
+    # it must be created explicitly (rather than left to the entity that lives
+    # on it, the all-zones-off button) and before the platforms load, which
+    # need its registry id.
+    hub_device = device_registry.async_get_or_create(
         config_entry_id=entry.entry_id,
         identifiers={(DOMAIN, entry.entry_id)},
         name=entry.title,
@@ -41,6 +42,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: RtiAdConfigEntry) -> boo
         # doesn't correspond to an actual RTI model number.
         model="AD Series",
     )
+    coordinator.hub_device_id = hub_device.id
     _async_prune_stale_zone_devices(device_registry, entry.entry_id, zones)
 
     # all_zones_off is also registered by the media_player platform as an

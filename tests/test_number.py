@@ -29,7 +29,7 @@ async def test_device_info_matches_the_media_players_zone_device(hass):
     entity, _, _ = _number(hass, "treble", zone=2)
     info = entity._attr_device_info
     assert info["identifiers"] == {(const.DOMAIN, "entry1_zone_2")}
-    assert info["via_device"] == (const.DOMAIN, "entry1")
+    assert info["via_device_id"] == "hub-device-id"
     assert info["name"] == "Zone 2"
 
 
